@@ -1,42 +1,47 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Container, Button } from "react-bootstrap";
-import { MovieState } from "../../store/types";
 import { Movie } from "./movieComponent";
+import { Filter, MovieState } from "../../store/types";
+import { useMovieStore } from "../../store/store";
+
+const visibleCount = 3;
 
 interface MovieListProps {
-  movies: MovieState[];
   onUpdateMovie(movie: MovieState): void;
-  onToggleViewed(movie: MovieState): void;
 }
 
-export const MovieList: React.FC<MovieListProps> = ({
-  movies,
-  onUpdateMovie,
-  onToggleViewed,
-}) => {
+export const MovieList: React.FC<MovieListProps> = ({ onUpdateMovie }) => {
+  const { movies } = useMovieStore();
   const [startIndex, setStartIndex] = useState(0);
-  const visibleCount = 3;
 
-  const [filteredMovies, setFilteredMovies] = useState(movies);
+  const [filter, setFilter] = useState<Filter>(Filter.ALL);
 
-  useEffect(() => {
-    setFilteredMovies(movies);
-  }, [movies]);
+  function handleFilterChange(newFilter: Filter): void {
+    setFilter(newFilter);
+  }
 
-  const handlePrev = () => {
+  function handlePrev(): void {
     setStartIndex(Math.max(startIndex - visibleCount, 0));
-  };
+  }
 
-  const handleNext = () => {
+  function handleNext(): void {
     setStartIndex(
       Math.min(startIndex + visibleCount, movies.length - visibleCount)
     );
-  };
+  }
 
-  const visibleMovies = filteredMovies.slice(
-    startIndex,
-    startIndex + visibleCount
-  );
+  const visibleMovies = movies
+    .slice(startIndex, startIndex + visibleCount)
+    .filter((movie) => {
+      switch (filter) {
+        case Filter.FOR_SEEN:
+          return !movie.viewed;
+        case Filter.SEEN:
+          return movie.viewed;
+        default:
+          return true;
+      }
+    });
 
   return (
     <Container className="movie-carousel d-flex flex-column align-items-center">
@@ -51,13 +56,8 @@ export const MovieList: React.FC<MovieListProps> = ({
             ◀
           </Button>
 
-          {visibleMovies.map((movie) => (
-            <Movie
-              key={movie.id}
-              movie={movie}
-              onUpdateMovie={onUpdateMovie}
-              onToggleViewed={onToggleViewed}
-            />
+          {visibleMovies.map((movie: MovieState) => (
+            <Movie key={movie.id} movie={movie} onUpdateMovie={onUpdateMovie} />
           ))}
 
           <Button

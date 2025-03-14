@@ -2,6 +2,7 @@ export interface StoreState {
   movies: MovieState[];
   addMovie: (movie: MovieState) => void;
   updateMovie: (updatedMovie: MovieState) => void;
+  toggleViewed: (id: number) => void;
 }
 
 export interface MovieState {
@@ -11,10 +12,8 @@ export interface MovieState {
   viewed: boolean;
 }
 
-export const Filters = {
-  ALL: "All",
-  SEEN: "Seen",
-  FOR_SEEN: "For Seen",
-};
-
-export type Filter = (typeof Filters)[keyof typeof Filters];
+export enum Filter {
+  ALL = "All",
+  SEEN = "Seen",
+  FOR_SEEN = "For Seen",
+}

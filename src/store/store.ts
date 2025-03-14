@@ -1,12 +1,13 @@
 import { create } from "zustand";
-import { StoreState } from "./types";
+import { MovieState, StoreState } from "./types";
 
 export const useMovieStore = create<StoreState>((set) => ({
   movies: [],
 
-  addMovie: (movie) => set((state) => ({ movies: [...state.movies, movie] })),
+  addMovie: (movie: MovieState) =>
+    set((state) => ({ movies: [...state.movies, movie] })),
 
-  updateMovie: (updatedMovie) =>
+  updateMovie: (updatedMovie: MovieState) =>
     set((state) => ({
       movies: state.movies.map((movie) =>
         movie.id === updatedMovie.id
@@ -15,6 +16,18 @@ export const useMovieStore = create<StoreState>((set) => ({
               name: updatedMovie.name,
               image: updatedMovie.image,
               viewed: updatedMovie.viewed,
+            }
+          : movie
+      ),
+    })),
+
+  toggleViewed: (id: number) =>
+    set((state) => ({
+      movies: state.movies.map((movie) =>
+        movie.id === id
+          ? {
+              ...movie,
+              viewed: !movie.viewed,
             }
           : movie
       ),

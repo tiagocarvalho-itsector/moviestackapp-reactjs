@@ -1,28 +1,29 @@
 import { Button, Form, Modal } from "react-bootstrap";
 import { MovieState } from "../../store/types";
 import { useEffect, useState } from "react";
+import { useMovieStore } from "../../store/store";
 
 interface MovieFormProps {
   movie: MovieState;
   isEdit: boolean;
   show: boolean;
   onHide(): void;
-  refreshMoviesTrigger: boolean;
-  setRefreshMoviesTrigger: React.Dispatch<React.SetStateAction<boolean>>;
-  onAddMovie(movie: MovieState): void;
-  onUpdateMovie(movie: MovieState): void;
 }
+
+const emptyMovie: MovieState = {
+  id: 0,
+  name: "",
+  image: "",
+  viewed: false,
+};
 
 export const MovieForm: React.FC<MovieFormProps> = ({
   movie,
   isEdit,
   show,
   onHide,
-  refreshMoviesTrigger,
-  setRefreshMoviesTrigger,
-  onAddMovie,
-  onUpdateMovie,
 }) => {
+  const { addMovie, updateMovie } = useMovieStore();
   const [formMovie, setFormMovie] = useState<MovieState>(movie);
 
   useEffect(() => {
@@ -39,8 +40,7 @@ export const MovieForm: React.FC<MovieFormProps> = ({
   function handleSubmit(e: React.FormEvent<HTMLFormElement>): void {
     e.preventDefault();
     if (!isFormValid(formMovie)) return;
-    isEdit ? onUpdateMovie(formMovie) : onAddMovie(formMovie);
-    setRefreshMoviesTrigger(!refreshMoviesTrigger);
+    isEdit ? updateMovie(formMovie) : addMovie(formMovie);
     onHide();
     clearForm();
   }
@@ -50,12 +50,7 @@ export const MovieForm: React.FC<MovieFormProps> = ({
   }
 
   function clearForm(): void {
-    setFormMovie({
-      id: 0,
-      name: "",
-      image: "",
-      viewed: false,
-    });
+    setFormMovie(emptyMovie);
   }
 
   return (
