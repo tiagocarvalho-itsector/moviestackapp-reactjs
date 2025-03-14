@@ -10,3 +10,11 @@ export interface MovieState {
   image: string;
   viewed: boolean;
 }
+
+export const Filters = {
+  ALL: "All",
+  SEEN: "Seen",
+  FOR_SEEN: "For Seen",
+};
+
+export type Filter = (typeof Filters)[keyof typeof Filters];
