@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Container, Button } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Container, Button, Dropdown, Spinner } from "react-bootstrap";
 import { Movie } from "./movieComponent";
 import { Filter, MovieState } from "../../store/types";
 import { useMovieStore } from "../../store/store";
@@ -11,13 +11,35 @@ interface MovieListProps {
 }
 
 export const MovieList: React.FC<MovieListProps> = ({ onUpdateMovie }) => {
-  const { movies } = useMovieStore();
+  const movies = useMovieStore((state) => state.movies);
+  console.log("Movies state inside component:", movies);
+
   const [startIndex, setStartIndex] = useState(0);
 
   const [filter, setFilter] = useState<Filter>(Filter.ALL);
+  const [filteredMovies, setFilteredMovies] = useState<MovieState[]>(movies);
 
-  function handleFilterChange(newFilter: Filter): void {
-    setFilter(newFilter);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    const filtered = movies.filter((movie) => {
+      switch (filter) {
+        case Filter.SEEN:
+          return movie.viewed;
+        case Filter.NOT_SEEN:
+          return !movie.viewed;
+        default:
+          return true;
+      }
+    });
+
+    setFilteredMovies(filtered);
+    setLoading(false);
+  }, [filter, movies]);
+
+  function handleFilterChange(newFilter: string | null): void {
+    setFilter(newFilter ? (newFilter as Filter) : Filter.ALL);
   }
 
   function handlePrev(): void {
@@ -26,50 +48,66 @@ export const MovieList: React.FC<MovieListProps> = ({ onUpdateMovie }) => {
 
   function handleNext(): void {
     setStartIndex(
-      Math.min(startIndex + visibleCount, movies.length - visibleCount)
+      Math.min(startIndex + visibleCount, filteredMovies.length - visibleCount)
     );
   }
 
-  const visibleMovies = movies
-    .slice(startIndex, startIndex + visibleCount)
-    .filter((movie) => {
-      switch (filter) {
-        case Filter.FOR_SEEN:
-          return !movie.viewed;
-        case Filter.SEEN:
-          return movie.viewed;
-        default:
-          return true;
-      }
-    });
+  const visibleMovies = filteredMovies.slice(
+    startIndex,
+    startIndex + visibleCount
+  );
 
-  return (
-    <Container className="movie-carousel d-flex flex-column align-items-center">
-      <div className="d-flex align-items-center justify-content-center gap-3">
-        <div className="movie-cards-wrapper d-flex align-items-center gap-4">
-          <Button
-            variant="dark"
-            onClick={handlePrev}
-            disabled={startIndex === 0}
-            className="navigation-button"
-          >
-            ◀
-          </Button>
-
-          {visibleMovies.map((movie: MovieState) => (
-            <Movie key={movie.id} movie={movie} onUpdateMovie={onUpdateMovie} />
+  return loading ? (
+    <div className="spinner-overlay d-flex justify-content-center align-items-center">
+      <Spinner animation="border" variant="primary" />
+    </div>
+  ) : (
+    <>
+      <Dropdown onSelect={handleFilterChange}>
+        <Dropdown.Toggle variant="dark" className="mt-2">
+          Filter By Viewing Status
+        </Dropdown.Toggle>
+        <Dropdown.Menu>
+          {Object.values(Filter).map((filter, index) => (
+            <Dropdown.Item
+              key={index}
+              eventKey={filter}
+              href={`#${filter.toLowerCase().replace(/\s+/g, "-")}`}
+            >
+              {filter}
+            </Dropdown.Item>
           ))}
+        </Dropdown.Menu>
+      </Dropdown>
+      <Container className="movie-carousel d-flex flex-column align-items-center">
+        <div className="d-flex align-items-center justify-content-center">
+          <div className="movie-cards-wrapper d-flex align-items-center">
+            <Button
+              variant="dark"
+              onClick={handlePrev}
+              disabled={startIndex === 0}
+            >
+              ◀
+            </Button>
 
-          <Button
-            variant="dark"
-            onClick={handleNext}
-            disabled={startIndex + visibleCount >= movies.length}
-            className="navigation-button"
-          >
-            ▶
-          </Button>
+            {visibleMovies.map((movie: MovieState) => (
+              <Movie
+                key={movie.id}
+                movie={movie}
+                onUpdateMovie={onUpdateMovie}
+              />
+            ))}
+
+            <Button
+              variant="dark"
+              onClick={handleNext}
+              disabled={startIndex + visibleCount >= filteredMovies.length}
+            >
+              ▶
+            </Button>
+          </div>
         </div>
-      </div>
-    </Container>
+      </Container>
+    </>
   );
 };

@@ -1,5 +1,5 @@
 import { Button, Form, Modal } from "react-bootstrap";
-import { MovieState } from "../../store/types";
+import { emptyMovie, MovieState } from "../../store/types";
 import { useEffect, useState } from "react";
 import { useMovieStore } from "../../store/store";
 
@@ -9,13 +9,6 @@ interface MovieFormProps {
   show: boolean;
   onHide(): void;
 }
-
-const emptyMovie: MovieState = {
-  id: 0,
-  name: "",
-  image: "",
-  viewed: false,
-};
 
 export const MovieForm: React.FC<MovieFormProps> = ({
   movie,
@@ -37,25 +30,25 @@ export const MovieForm: React.FC<MovieFormProps> = ({
     });
   }
 
+  function handleClose(): void {
+    if (!isEdit) setFormMovie(emptyMovie);
+    onHide();
+  }
+
   function handleSubmit(e: React.FormEvent<HTMLFormElement>): void {
     e.preventDefault();
     if (!isFormValid(formMovie)) return;
     isEdit ? updateMovie(formMovie) : addMovie(formMovie);
-    onHide();
-    clearForm();
+    handleClose();
   }
 
   function isFormValid(movie: MovieState) {
     return movie.name.trim() !== "" && movie.image.trim() !== "";
   }
 
-  function clearForm(): void {
-    setFormMovie(emptyMovie);
-  }
-
   return (
     <>
-      <Modal show={show} onHide={onHide}>
+      <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title data-testid={"formTitle"}>
             {isEdit ? "Edit" : "Add New"} Movie

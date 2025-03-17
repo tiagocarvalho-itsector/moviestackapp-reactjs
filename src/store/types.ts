@@ -12,8 +12,15 @@ export interface MovieState {
   viewed: boolean;
 }
 
+export const emptyMovie: MovieState = {
+  id: 0,
+  name: "",
+  image: "",
+  viewed: false,
+};
+
 export enum Filter {
   ALL = "All",
   SEEN = "Seen",
-  FOR_SEEN = "For Seen",
+  NOT_SEEN = "Not Seen",
 }
