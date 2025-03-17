@@ -11,7 +11,7 @@ interface MovieListProps {
 }
 
 export const MovieList: React.FC<MovieListProps> = ({ onUpdateMovie }) => {
-  const movies = useMovieStore((state) => state.movies);
+  const { movies } = useMovieStore();
 
   const [startIndex, setStartIndex] = useState(0);
 
@@ -77,7 +77,7 @@ export const MovieList: React.FC<MovieListProps> = ({ onUpdateMovie }) => {
     <>
       <Dropdown onSelect={handleFilterChange}>
         <Dropdown.Toggle variant="dark" className="mt-2">
-          Filter By Viewing Status
+          Filter By Viewing Status: <b>{filter}</b>
         </Dropdown.Toggle>
         <Dropdown.Menu>
           {Object.values(Filter).map((filter, index) => (

@@ -8,7 +8,7 @@ interface MovieProps {
 }
 
 export const Movie: React.FC<MovieProps> = ({ movie, onUpdateMovie }) => {
-  const { toggleViewed } = useMovieStore();
+  const { toggleViewed, deleteMovie } = useMovieStore();
 
   function handleToggleViewed() {
     toggleViewed(movie.id);
@@ -16,6 +16,10 @@ export const Movie: React.FC<MovieProps> = ({ movie, onUpdateMovie }) => {
 
   function handleEditButtonClick() {
     onUpdateMovie(movie);
+  }
+
+  function handleDeleteButtonClick() {
+    deleteMovie(movie.id);
   }
 
   return (
@@ -35,13 +39,22 @@ export const Movie: React.FC<MovieProps> = ({ movie, onUpdateMovie }) => {
           className="form-check-inline"
         />
         <br />
-        <Button
-          variant="primary"
-          className="mt-2"
-          onClick={handleEditButtonClick}
-        >
-          Edit
-        </Button>
+        <div className="d-flex gap-1 justify-content-center">
+          <Button
+            variant="primary"
+            className="mt-2"
+            onClick={handleEditButtonClick}
+          >
+            Edit
+          </Button>
+          <Button
+            variant="danger"
+            className="mt-2"
+            onClick={handleDeleteButtonClick}
+          >
+            Delete
+          </Button>
+        </div>
       </Card.Body>
     </Card>
   );

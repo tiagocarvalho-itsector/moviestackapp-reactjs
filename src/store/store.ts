@@ -61,4 +61,9 @@ export const useMovieStore = create<StoreState>((set) => ({
           : movie
       ),
     })),
+
+  deleteMovie: (id: number) =>
+    set((state) => ({
+      movies: state.movies.filter((movie) => movie.id !== id),
+    })),
 }));

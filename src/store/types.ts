@@ -3,6 +3,7 @@ export interface StoreState {
   addMovie: (movie: MovieState) => void;
   updateMovie: (updatedMovie: MovieState) => void;
   toggleViewed: (id: number) => void;
+  deleteMovie: (id: number) => void;
 }
 
 export interface MovieState {
