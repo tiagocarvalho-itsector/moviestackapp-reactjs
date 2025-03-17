@@ -4,7 +4,7 @@ import { Movies } from "./screens/components/moviesComponent";
 function App() {
   return (
     <div className="background">
-      <Container className="d-flex flex-column align-items-center justify-content-between py-">
+      <Container className="d-flex flex-column align-items-center justify-content-between py-2">
         <h1 className="movie-stack-title">Movie Stack 🎬</h1>
         <Movies />
       </Container>

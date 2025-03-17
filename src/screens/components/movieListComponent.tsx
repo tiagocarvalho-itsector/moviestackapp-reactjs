@@ -45,6 +45,13 @@ export const MovieList: React.FC<MovieListProps> = ({ onUpdateMovie }) => {
 
   function handleFilterChange(newFilter: string | null): void {
     setFilter(newFilter ? (newFilter as Filter) : Filter.ALL);
+    newFilter === Filter.ALL || newFilter === null
+      ? window.history.pushState({}, "", "/")
+      : window.history.pushState(
+          {},
+          "",
+          `/${newFilter.toLowerCase().replace(/\s+/g, "-")}`
+        );
   }
 
   function handlePrev(): void {
@@ -74,11 +81,7 @@ export const MovieList: React.FC<MovieListProps> = ({ onUpdateMovie }) => {
         </Dropdown.Toggle>
         <Dropdown.Menu>
           {Object.values(Filter).map((filter, index) => (
-            <Dropdown.Item
-              key={index}
-              eventKey={filter}
-              href={`#${filter.toLowerCase().replace(/\s+/g, "-")}`}
-            >
+            <Dropdown.Item key={index} eventKey={filter}>
               {filter}
             </Dropdown.Item>
           ))}
