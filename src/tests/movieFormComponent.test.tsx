@@ -16,6 +16,10 @@ describe("<MovieForm />", () => {
     }),
   }));
 
+  jest.mock("../screens/components/movieFormComponent.tsx", () => ({
+    isFormValid: jest.fn(() => false),
+  }));
+
   const defaultMovie: MovieState = {
     id: 1,
     name: "Test Movie",
@@ -123,42 +127,6 @@ describe("<MovieForm />", () => {
     //ASSERT
     expect(name.value).toBe("Another Test Movie");
   });
-
-  //   test("should trigger add movie when isEdit is false and all fields are filled", () => {
-  //     //ARRANGE
-  //     render(
-  //       <MovieForm
-  //         isEdit={false}
-  //         show={true}
-  //         onHide={mockOnHide}
-  //         movie={{ ...defaultMovie, id: 0 }}
-  //       />
-  //     );
-
-  //     //ACT
-  //     fireEvent.click(screen.getByTestId("formSubmitButton"));
-
-  //     //ASSERT
-  //     expect(mockAddMovie).toHaveBeenCalledWith({ ...defaultMovie, id: 0 });
-  //   });
-
-  //   test("should trigger edit movie when isEdit is true and all fields are filled", () => {
-  //     //ARRANGE
-  //     render(
-  //       <MovieForm
-  //         isEdit={true}
-  //         show={true}
-  //         onHide={mockOnHide}
-  //         movie={defaultMovie}
-  //       />
-  //     );
-
-  //     //ACT
-  //     fireEvent.click(screen.getByTestId("formSubmitButton"));
-
-  //     //ASSERT
-  //     expect(mockUpdateMovie).toHaveBeenCalledWith(defaultMovie);
-  //   });
 
   test("should close modal when clicking close button", () => {
     //ARRANGE

@@ -33,6 +33,8 @@ export const useMovieStore = create<StoreState>((set) => ({
     },
   ],
 
+  setMovies: (movies: MovieState[]) => set(() => ({ movies })),
+
   addMovie: (movie: MovieState) =>
     set((state) => ({ movies: [...state.movies, movie] })),
 

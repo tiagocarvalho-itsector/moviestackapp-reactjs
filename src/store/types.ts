@@ -1,5 +1,6 @@
 export interface StoreState {
   movies: MovieState[];
+  setMovies: (movies: MovieState[]) => void;
   addMovie: (movie: MovieState) => void;
   updateMovie: (updatedMovie: MovieState) => void;
   toggleViewed: (id: number) => void;

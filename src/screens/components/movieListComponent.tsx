@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Container, Button, Dropdown, Spinner } from "react-bootstrap";
+import React, { useEffect, useState, useMemo } from "react";
+import { Container, Button, Dropdown } from "react-bootstrap";
 import { Movie } from "./movieComponent";
 import { Filter, MovieState } from "../../store/types";
 import { useMovieStore } from "../../store/store";
@@ -14,44 +14,39 @@ export const MovieList: React.FC<MovieListProps> = ({ onUpdateMovie }) => {
   const { movies } = useMovieStore();
 
   const [startIndex, setStartIndex] = useState(0);
-
-  const localStorageFilter = localStorage.getItem("filter");
   const [filter, setFilter] = useState<Filter>(
-    (localStorageFilter as Filter) ?? Filter.ALL
+    (localStorage.getItem("filter") as Filter) ?? Filter.ALL
   );
 
-  const [filteredMovies, setFilteredMovies] = useState<MovieState[]>(movies);
+  const filterMovies = (filter: Filter) => {
+    switch (filter) {
+      case Filter.SEEN:
+        return movies.filter((movie) => movie.viewed);
+      case Filter.NOT_SEEN:
+        return movies.filter((movie) => !movie.viewed);
+      default:
+        return movies;
+    }
+  };
 
-  const [loading, setLoading] = useState(true);
+  const filteredMovies = useMemo(() => filterMovies(filter), [movies, filter]);
 
   useEffect(() => {
-    setLoading(true);
     localStorage.setItem("filter", filter.toString());
-
-    const filtered = movies.filter((movie) => {
-      switch (filter) {
-        case Filter.SEEN:
-          return movie.viewed;
-        case Filter.NOT_SEEN:
-          return !movie.viewed;
-        default:
-          return true;
-      }
-    });
-
-    setFilteredMovies(filtered);
-    setLoading(false);
-  }, [filter, movies]);
+  }, [filter]);
 
   function handleFilterChange(newFilter: string | null): void {
-    setFilter(newFilter ? (newFilter as Filter) : Filter.ALL);
-    newFilter === Filter.ALL || newFilter === null
-      ? window.history.pushState({}, "", "/")
-      : window.history.pushState(
-          {},
-          "",
-          `/${newFilter.toLowerCase().replace(/\s+/g, "-")}`
-        );
+    const newFilterValue = newFilter ? (newFilter as Filter) : Filter.ALL;
+    setFilter(newFilterValue);
+    if (newFilterValue === Filter.ALL || newFilterValue === null) {
+      window.history.pushState({}, "", "/");
+    } else {
+      window.history.pushState(
+        {},
+        "",
+        `/${newFilterValue.toLowerCase().replace(/\s+/g, "-")}`
+      );
+    }
   }
 
   function handlePrev(): void {
@@ -69,20 +64,31 @@ export const MovieList: React.FC<MovieListProps> = ({ onUpdateMovie }) => {
     startIndex + visibleCount
   );
 
-  return loading ? (
-    <div className="spinner-overlay d-flex justify-content-center align-items-center">
-      <Spinner animation="border" variant="primary" />
-    </div>
-  ) : (
+  return (
     <>
-      <Dropdown onSelect={handleFilterChange}>
-        <Dropdown.Toggle variant="dark" className="mt-2">
+      <Dropdown data-testid="dropdown" onSelect={handleFilterChange}>
+        <Dropdown.Toggle
+          data-testid="dropdown-toggle"
+          variant="dark"
+          className="mt-2"
+        >
           Filter By Viewing Status: <b>{filter}</b>
         </Dropdown.Toggle>
         <Dropdown.Menu>
-          {Object.values(Filter).map((filter, index) => (
-            <Dropdown.Item key={index} eventKey={filter}>
-              {filter}
+          {Object.values(Filter).map((filterValue, index) => (
+            <Dropdown.Item
+              data-testid={
+                "dropdown-" +
+                filterValue
+                  .toString()
+                  .toLowerCase()
+                  .replace(" ", "-")
+                  .replace("_", "-")
+              }
+              key={index}
+              eventKey={filterValue}
+            >
+              {filterValue}
             </Dropdown.Item>
           ))}
         </Dropdown.Menu>
