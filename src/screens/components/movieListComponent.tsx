@@ -12,17 +12,22 @@ interface MovieListProps {
 
 export const MovieList: React.FC<MovieListProps> = ({ onUpdateMovie }) => {
   const movies = useMovieStore((state) => state.movies);
-  console.log("Movies state inside component:", movies);
 
   const [startIndex, setStartIndex] = useState(0);
 
-  const [filter, setFilter] = useState<Filter>(Filter.ALL);
+  const localStorageFilter = localStorage.getItem("filter");
+  const [filter, setFilter] = useState<Filter>(
+    (localStorageFilter as Filter) ?? Filter.ALL
+  );
+
   const [filteredMovies, setFilteredMovies] = useState<MovieState[]>(movies);
 
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setLoading(true);
+    localStorage.setItem("filter", filter.toString());
+
     const filtered = movies.filter((movie) => {
       switch (filter) {
         case Filter.SEEN:

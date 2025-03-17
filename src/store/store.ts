@@ -50,13 +50,15 @@ export const useMovieStore = create<StoreState>((set) => ({
       ),
     })),
 
-  toggleViewed: (id) =>
-    set((state) => {
-      console.log("Before toggle:", state.movies);
-      const updatedMovies = state.movies.map((movie) =>
-        movie.id === id ? { ...movie, viewed: !movie.viewed } : movie
-      );
-      console.log("After toggle:", updatedMovies);
-      return { movies: updatedMovies };
-    }),
+  toggleViewed: (id: number) =>
+    set((state) => ({
+      movies: state.movies.map((movie) =>
+        movie.id === id
+          ? {
+              ...movie,
+              viewed: !movie.viewed,
+            }
+          : movie
+      ),
+    })),
 }));
