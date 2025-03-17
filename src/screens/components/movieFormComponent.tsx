@@ -59,6 +59,7 @@ export const MovieForm: React.FC<MovieFormProps> = ({
             <Form.Group controlId="formName">
               <Form.Label>Name</Form.Label>
               <Form.Control
+                data-testid="formNameInput"
                 required={true}
                 type="text"
                 placeholder="Movie Name"
@@ -70,6 +71,7 @@ export const MovieForm: React.FC<MovieFormProps> = ({
             <Form.Group controlId="formImage">
               <Form.Label>Image</Form.Label>
               <Form.Control
+                data-testid="formImageInput"
                 required={true}
                 type="url"
                 placeholder="Image URL"
@@ -79,6 +81,7 @@ export const MovieForm: React.FC<MovieFormProps> = ({
               />
             </Form.Group>
             <Button
+              data-testid="formSubmitButton"
               className="mt-3"
               variant={
                 isFormValid(formMovie) ? "outline-success" : "outline-secondary"
