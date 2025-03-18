@@ -25,13 +25,15 @@ export const Movie: React.FC<MovieProps> = ({ movie, onUpdateMovie }) => {
   return (
     <Card className="align-items-center">
       <Card.Img
+        data-testid="image"
         src={movie.image}
         alt="Invalid image"
         style={{ width: "250px", height: "250px" }}
       />
       <Card.Body className="text-center">
-        <Card.Title>{movie.name}</Card.Title>
+        <Card.Title data-testid="name">{movie.name}</Card.Title>
         <Form.Check
+          data-testid="checkbox"
           type="checkbox"
           label={movie.viewed ? "Mark as Not Seen" : "Mark as Seen"}
           checked={movie.viewed}
@@ -41,6 +43,7 @@ export const Movie: React.FC<MovieProps> = ({ movie, onUpdateMovie }) => {
         <br />
         <div className="d-flex gap-1 justify-content-center">
           <Button
+            data-testid="edit"
             variant="primary"
             className="mt-2"
             onClick={handleEditButtonClick}
@@ -48,6 +51,7 @@ export const Movie: React.FC<MovieProps> = ({ movie, onUpdateMovie }) => {
             Edit
           </Button>
           <Button
+            data-testid="delete"
             variant="danger"
             className="mt-2"
             onClick={handleDeleteButtonClick}
