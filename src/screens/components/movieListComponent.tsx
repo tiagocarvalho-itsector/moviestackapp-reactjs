@@ -97,6 +97,7 @@ export const MovieList: React.FC<MovieListProps> = ({ onUpdateMovie }) => {
         <div className="d-flex align-items-center justify-content-center">
           <div className="movie-cards-wrapper d-flex align-items-center">
             <Button
+              data-testid="prevButton"
               variant="dark"
               onClick={handlePrev}
               disabled={startIndex === 0}
@@ -113,6 +114,7 @@ export const MovieList: React.FC<MovieListProps> = ({ onUpdateMovie }) => {
             ))}
 
             <Button
+              data-testid="nextButton"
               variant="dark"
               onClick={handleNext}
               disabled={startIndex + visibleCount >= filteredMovies.length}
