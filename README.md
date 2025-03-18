@@ -10,7 +10,7 @@ Its purpose is to show a list of movies (including its name - title - and their 
 
 To initialize this project, a ReactJS + TypeScript + Vite template was used.
 
-During the development process, the latest versions (as of March $18^th$ 2025) of the following technologies, packages and frameworks were handled:
+During the development process, the latest versions (as of March 18^${th}$ 2025) of the following technologies, packages and frameworks were handled:
 
 * ReactJS
 * TypeScript
